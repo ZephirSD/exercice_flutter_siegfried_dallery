@@ -73,7 +73,14 @@ class _HomeCalcState extends State<HomeCalc> {
       if (textValue == "=" && operation == "+") {
         total = (premierNb + secondNb);
       } else if (textValue == "=" && operation == "-") {
-        total = (premierNb - secondNb);
+        // Lorsque les deux nombres sont identiques
+        if (secondNb == premierNb) {
+          textCalc = "0";
+          secondNb = 0;
+          premierNb = 0;
+        } else {
+          total = (premierNb - secondNb);
+        }
       } else if (textValue == "=" && operation == "*") {
         total = (premierNb * secondNb);
       } else if (textValue == "=" && operation == "/") {
