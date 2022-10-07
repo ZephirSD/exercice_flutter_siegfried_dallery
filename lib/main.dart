@@ -45,24 +45,31 @@ class _HomeCalcState extends State<HomeCalc> {
   int total = 0;
   String operation = "";
   String textCalc = "";
-  clickNombre(textValue) {
+
+  // Fonction pour récupérer les nombres de la calculatrice
+  clickNombre(String textValue) {
     setState(() {
       textCalc = textValue;
       if (operation != "") {
-        secondNb = int.parse(textCalc);
-        // print('second${secondNb}');
+        if (total > 0) {
+          premierNb = total;
+          secondNb = int.parse(textCalc);
+        } else {
+          secondNb = int.parse(textCalc);
+        }
       } else {
         premierNb = int.parse(textCalc);
-        // print('premier${premierNb}');
       }
     });
   }
 
+  //Fonction pour ajouter les initier les opérateurs et les calculs
   clickOperator(textValue) {
     setState(() {
       if (textValue != "=") {
         operation = textValue;
       }
+      // Condition pour les opérations
       if (textValue == "=" && operation == "+") {
         total = (premierNb + secondNb);
       } else if (textValue == "=" && operation == "-") {
@@ -70,7 +77,23 @@ class _HomeCalcState extends State<HomeCalc> {
       } else if (textValue == "=" && operation == "*") {
         total = (premierNb * secondNb);
       } else if (textValue == "=" && operation == "/") {
-        total = (premierNb / secondNb) as int;
+        // Lorsqu'on divise par zero
+        if (secondNb > 0) {
+          total = (premierNb / secondNb) as int;
+        } else {
+          textCalc = "Erreur";
+          total = 0;
+        }
+      }
+      // Condition lorsqu'on clique sur "AC"
+      if (textValue == "AC") {
+        premierNb = 0;
+        secondNb = 0;
+        total = 0;
+        textCalc = "";
+        if (operation != "") {
+          operation = "";
+        }
       }
       if (total > 0) {
         textCalc = total.toString();
@@ -81,6 +104,7 @@ class _HomeCalcState extends State<HomeCalc> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // Boutons de la calculatrice
       child: Column(
         verticalDirection: VerticalDirection.up,
         children: [
@@ -169,10 +193,26 @@ class _HomeCalcState extends State<HomeCalc> {
               ),
             ],
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              ButtonCalc(
+                "AC",
+                funcCal: () => clickOperator("AC"),
+                flex: 3,
+              ),
+              ButtonCalc(
+                "/",
+                funcCal: () => clickOperator("/"),
+              ),
+            ],
+          ),
+          // Affichage du résultat
           Container(
             child: Text(
               textCalc,
-              style: TextStyle(fontSize: 28),
+              style: TextStyle(fontSize: 34),
             ),
             alignment: Alignment(1.0, 1.0),
           ),
